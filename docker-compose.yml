@@ -1,0 +1,16 @@
+services:
+  db_workspaces:
+    image: postgres:14
+    container_name: db_workspaces
+    restart: always
+    volumes:
+      - "./db:/var/lib/postgresql"
+    ports:
+      - "5433:5432"
+    networks:
+      - workspaces
+    environment:
+      - POSTGRES_PASSWORD=password
+
+networks:
+  workspaces:

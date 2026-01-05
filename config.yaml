@@ -1,0 +1,14 @@
+database:
+  host: postgres-service
+  port: 5432
+  user: postgres
+  password: password
+  name: workspaces
+
+server:
+  port: 8000
+  env: development
+
+docker:
+  max_containers: 10
+  default_image: nginx:latest
