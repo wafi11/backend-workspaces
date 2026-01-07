@@ -13,9 +13,11 @@ type ErrorMessage string
 const (
 	// Registration errors
 	ErrUsernameExists     ErrorMessage = "username already exists"
+	ErrUsernameNotFound   ErrorMessage = "invalid credentials"
 	ErrEmailExists        ErrorMessage = "email already exists"
 	ErrPhoneNumberExists  ErrorMessage = "phone number already exists"
 	ErrWeakPassword       ErrorMessage = "password does not meet security requirements"
+	ErrPasswordNotMatch   ErrorMessage = "password not match"
 	ErrPasswordHashFailed ErrorMessage = "failed to hash password"
 	ErrInvalidUsername    ErrorMessage = "username format is invalid"
 	ErrInvalidEmail       ErrorMessage = "email format is invalid"

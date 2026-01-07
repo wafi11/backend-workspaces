@@ -30,3 +30,18 @@ func (h *Handler) RegisterUser(c *fiber.Ctx) error {
 
 	return response.Success(c, http.StatusCreated, "user registered successfully", nil)
 }
+
+func (h *Handler) Login(c *fiber.Ctx) error {
+	var req LoginUser
+
+	if err := c.BodyParser(&req); err != nil {
+		return response.Error(c, http.StatusBadRequest, "invalid body request")
+	}
+
+	access_token, err := h.s.Login(c.Context(), req)
+	if err != nil {
+		return response.Error(c, http.StatusBadRequest, err.Error())
+	}
+
+	return response.Success(c, http.StatusOK, "Login Successfully", access_token)
+}

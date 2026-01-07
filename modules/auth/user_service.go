@@ -1,6 +1,9 @@
 package auth
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 type Service struct {
 	repo UserRepository
@@ -31,5 +34,17 @@ func (s *Service) Register(c context.Context, req RegisterUser) error {
 		Email:       req.Email,
 		PhoneNumber: phoneNumber,
 		Password:    req.Password,
+	})
+}
+
+func (s *Service) Login(c context.Context, req LoginUser) (*LoginResponse, error) {
+	err := validateUsername(req.Username)
+	if err != nil {
+		return nil, fmt.Errorf("%s", err.Error())
+	}
+
+	return s.repo.Login(c, LoginUser{
+		Username: req.Username,
+		Password: req.Password,
 	})
 }

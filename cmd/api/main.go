@@ -20,14 +20,13 @@ func main() {
 		log.Fatal("Failed to load config:", err)
 	}
 
-	// ✅ Langsung connect dari cfg.Database
 	db, err := cfg.Database.Connect()
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
 	defer db.Close()
 
-	log.Println("✅ Database connected successfully!")
+	log.Println("Database connected successfully!")
 
 	app := fiber.New()
 
@@ -87,25 +86,16 @@ func main() {
 			})
 		}
 
-		var productCount int
-		err = db.QueryRow("SELECT COUNT(*) FROM products").Scan(&productCount)
-		if err != nil {
-			return c.Status(500).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
-
 		return c.JSON(fiber.Map{
 			"version":          version,
 			"current_database": currentDB,
-			"product_count":    productCount,
 			"status":           "connected",
 		})
 	})
 
 	// Routes
 	api := app.Group("/api/v1")
-	server.NewRoutes(db, api)
+	server.NewRoutes(db, *cfg, api)
 
 	port := fmt.Sprintf(":%s", cfg.Server.Port)
 	log.Printf("🚀 Server starting on port %s", port)

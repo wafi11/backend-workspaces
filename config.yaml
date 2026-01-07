@@ -1,9 +1,16 @@
 database:
-  host: postgres-service
-  port: 5432
+  host: localhost
+  port: 5433
   user: postgres
   password: password
   name: workspaces
+
+secret_key:
+  jwt_secret_key: 1qarI6XaZoptvb320U2Abh
+
+duration:
+  access_token_duration: 604800
+  refresh_token_duration: 900
 
 server:
   port: 8000

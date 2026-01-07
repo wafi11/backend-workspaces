@@ -5,9 +5,11 @@ import (
 )
 
 type Config struct {
-	Database DatabaseConfig `mapstructure:"database"`
-	Server   ServerConfig   `mapstructure:"server"`
-	Docker   DockerConfig   `mapstructure:"docker"`
+	Database  DatabaseConfig `mapstructure:"database"`
+	SecretKey SecretKey      `mapstructure:"secret_key"`
+	Duration  Duration       `mapstructure:"duration"`
+	Server    ServerConfig   `mapstructure:"server"`
+	Docker    DockerConfig   `mapstructure:"docker"`
 }
 
 type ServerConfig struct {
@@ -18,6 +20,15 @@ type ServerConfig struct {
 type DockerConfig struct {
 	MaxContainers int    `mapstructure:"max_containers"`
 	DefaultImage  string `mapstructure:"default_image"`
+}
+
+type SecretKey struct {
+	JwtSecretKey string `mapstructure:"jwt_secret_key"`
+}
+
+type Duration struct {
+	AccessToken int `mapstructure:"access_token_duration"`
+	RefresToken int `mapstructure:"refresh_token_duration"`
 }
 
 func LoadConfig() (*Config, error) {

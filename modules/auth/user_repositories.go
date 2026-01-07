@@ -4,17 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 
+	"github.com/wafi11/backend-workspaces/pkg/config"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Repository struct {
-	DB *sql.DB
+	DB  *sql.DB
+	cfg config.Config
 }
 
-func NewRepository(db *sql.DB) UserRepository {
-	return &Repository{DB: db}
+func NewRepository(db *sql.DB, cfg config.Config) UserRepository {
+	return &Repository{DB: db, cfg: cfg}
 }
 
 func (repo *Repository) Create(c context.Context, req RegisterUser) error {
@@ -56,5 +59,29 @@ func (repo *Repository) Create(c context.Context, req RegisterUser) error {
 }
 
 func (repo *Repository) Login(c context.Context, req LoginUser) (*LoginResponse, error) {
-	return nil, nil
+	var password_hash, password string
+	var id int
+	query := `
+		select id,password_hash,password from users where username = $1
+
+	`
+	err := repo.DB.QueryRowContext(c, query, req.Username).Scan(&id, &password_hash, &password)
+	if err != nil {
+		return nil, fmt.Errorf("%s", ErrInvalidCredentials)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(password_hash), []byte(req.Password))
+	if err != nil {
+		return nil, fmt.Errorf("%s", ErrInvalidCredentials)
+	}
+
+	accessToken, _, err := GenerateTokenPair(id, repo.cfg)
+	if err != nil {
+		log.Printf("%s", err.Error())
+		return nil, fmt.Errorf("%s", ErrInvalidCredentials)
+	}
+
+	return &LoginResponse{
+		Token: accessToken,
+	}, nil
 }
